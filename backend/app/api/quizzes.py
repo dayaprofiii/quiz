@@ -21,12 +21,14 @@ def normalized_quiz_data(payload: QuizPayload) -> dict:
 
 
 @router.get('', response_model=QuizListResponse)
+@router.get('/', response_model=QuizListResponse, include_in_schema=False)
 async def list_quizzes(session: AsyncSession = Depends(get_session)):
     result = await session.scalars(select(Quiz).order_by(Quiz.created_at.desc()))
     return {'quizzes': [serialize_quiz(quiz) for quiz in result.all()]}
 
 
 @router.post('', response_model=QuizResponse)
+@router.post('/', response_model=QuizResponse, include_in_schema=False)
 async def create_quiz(payload: QuizPayload, session: AsyncSession = Depends(get_session)):
     data = normalized_quiz_data(payload)
     owner = await session.get(User, data['ownerId'])

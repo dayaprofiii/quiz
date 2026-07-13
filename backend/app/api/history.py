@@ -12,6 +12,7 @@ router = APIRouter(prefix='/history', tags=['history'])
 
 
 @router.get('', response_model=HistoryResponse)
+@router.get('/', response_model=HistoryResponse, include_in_schema=False)
 async def list_history(session: AsyncSession = Depends(get_session)):
     history_items = (await session.scalars(select(History).order_by(History.finished_at.desc()))).all()
     users = (await session.scalars(select(User))).all()

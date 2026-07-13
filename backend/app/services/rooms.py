@@ -174,6 +174,11 @@ class RoomManager:
             raise HTTPException(status.HTTP_400_BAD_REQUEST, 'Участник или вопрос не найден.')
         if not answer_ids:
             raise HTTPException(status.HTTP_400_BAD_REQUEST, 'Выберите вариант ответа.')
+        if len(answer_ids) != len(set(answer_ids)):
+            raise HTTPException(status.HTTP_400_BAD_REQUEST, 'Нельзя отправить один и тот же ответ несколько раз.')
+        valid_answer_ids = {answer.get('id') for answer in question.get('answers', [])}
+        if any(answer_id not in valid_answer_ids for answer_id in answer_ids):
+            raise HTTPException(status.HTTP_400_BAD_REQUEST, 'Выбран несуществующий вариант ответа.')
         if not question.get('multi') and len(answer_ids) > 1:
             raise HTTPException(status.HTTP_400_BAD_REQUEST, 'В этом вопросе можно выбрать только один ответ.')
         if room.deadline and datetime.now(timezone.utc) > room.deadline:

@@ -29,6 +29,7 @@ async def save_room_history(session: AsyncSession, room) -> None:
 
 
 @router.post('', response_model=CreateRoomResponse)
+@router.post('/', response_model=CreateRoomResponse, include_in_schema=False)
 async def create_room(payload: CreateRoomPayload, session: AsyncSession = Depends(get_session)):
     quiz = await session.get(Quiz, payload.quizId)
     if not quiz:

@@ -1,7 +1,3 @@
-# Quizleet
-
-Веб-приложение для проведения квизов в реальном времени.
-
 ## Запуск
 
 Проект запускается одной командой через Docker Compose:
@@ -33,7 +29,7 @@ frontend/
     shared/    API-клиент, общие функции и UI-компоненты
   public/      статические файлы
   scripts/     сборка клиентского приложения
-  Dockerfile   production-сборка frontend
+  Dockerfile   сборка frontend
   nginx.conf   раздача frontend, проксирование API и WebSocket
 
 backend/
@@ -45,7 +41,7 @@ backend/
     schemas/   Pydantic-схемы
     services/  бизнес-логика, комнаты, валидация
   alembic/     миграции базы данных
-  Dockerfile   production-сборка backend
+  Dockerfile   сборка backend
 
 docker-compose.yml
   web, api и PostgreSQL в единой конфигурации

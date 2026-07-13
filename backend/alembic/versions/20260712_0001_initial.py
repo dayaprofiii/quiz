@@ -51,23 +51,19 @@ def upgrade() -> None:
         'history',
         sa.Column('id', sa.String(length=64), nullable=False),
         sa.Column('quiz_id', sa.String(length=64), nullable=True),
-        sa.Column('organizer_id', sa.String(length=64), nullable=True),
         sa.Column('quiz_title', sa.String(length=200), nullable=False),
         sa.Column('code', sa.String(length=16), nullable=False),
         sa.Column('finished_at', sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
         sa.Column('leaderboard', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
         sa.ForeignKeyConstraint(['quiz_id'], ['quizzes.id'], ondelete='SET NULL'),
-        sa.ForeignKeyConstraint(['organizer_id'], ['users.id'], ondelete='SET NULL'),
         sa.PrimaryKeyConstraint('id'),
     )
     op.create_index(op.f('ix_history_code'), 'history', ['code'], unique=False)
-    op.create_index(op.f('ix_history_organizer_id'), 'history', ['organizer_id'], unique=False)
     op.create_index(op.f('ix_history_quiz_id'), 'history', ['quiz_id'], unique=False)
 
 
 def downgrade() -> None:
     op.drop_index(op.f('ix_history_quiz_id'), table_name='history')
-    op.drop_index(op.f('ix_history_organizer_id'), table_name='history')
     op.drop_index(op.f('ix_history_code'), table_name='history')
     op.drop_table('history')
     op.drop_index(op.f('ix_quizzes_owner_id'), table_name='quizzes')

@@ -1,3 +1,7 @@
+# Quizleet
+
+Веб-приложение для проведения квизов в реальном времени.
+
 ## Запуск
 
 Проект запускается одной командой через Docker Compose:
@@ -12,6 +16,13 @@ docker compose up --build
 http://127.0.0.1:3000
 ```
 
+## Тестовые аккаунты
+
+```text
+organizer@quiz.test / 123456
+player@quiz.test / 123456
+```
+
 ## Архитектура
 
 ```text
@@ -22,7 +33,7 @@ frontend/
     shared/    API-клиент, общие функции и UI-компоненты
   public/      статические файлы
   scripts/     сборка клиентского приложения
-  Dockerfile   сборка frontend
+  Dockerfile   production-сборка frontend
   nginx.conf   раздача frontend, проксирование API и WebSocket
 
 backend/
@@ -34,7 +45,7 @@ backend/
     schemas/   Pydantic-схемы
     services/  бизнес-логика, комнаты, валидация
   alembic/     миграции базы данных
-  Dockerfile   сборка backend
+  Dockerfile   production-сборка backend
 
 docker-compose.yml
   web, api и PostgreSQL в единой конфигурации

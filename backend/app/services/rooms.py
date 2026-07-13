@@ -161,7 +161,10 @@ class RoomManager:
         await self.broadcast(room)
         return room, finished
 
-    async def answer(self, code: str, user_id: str, answer_ids: list[str]) -> tuple[bool, int, Room]:
+    def all_players_answered(self, room: Room) -> bool:
+        return bool(room.players) and len(room.answers) >= len(room.players)
+
+    async def answer(self, code: str, user_id: str, answer_ids: list[str]) -> tuple[bool, int, Room, int]:
         room = self.get(code)
         if room.status != 'running':
             raise HTTPException(status.HTTP_404_NOT_FOUND, 'Активный вопрос не найден.')

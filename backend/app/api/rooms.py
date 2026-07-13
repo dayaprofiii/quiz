@@ -14,6 +14,20 @@ from app.services.serializers import serialize_quiz
 router = APIRouter(prefix='/rooms', tags=['rooms'])
 
 
+async def save_room_history(session: AsyncSession, room) -> None:
+    history = History(
+        id=str(uuid4()),
+        quiz_id=room.quiz['id'],
+        organizer_id=room.organizer_id,
+        quiz_title=room.quiz['title'],
+        code=room.code,
+        finished_at=datetime.now(timezone.utc),
+        leaderboard=leaderboard(room),
+    )
+    session.add(history)
+    await session.commit()
+
+
 @router.post('', response_model=CreateRoomResponse)
 async def create_room(payload: CreateRoomPayload, session: AsyncSession = Depends(get_session)):
     quiz = await session.get(Quiz, payload.quizId)
@@ -45,21 +59,15 @@ async def start_room(code: str):
 async def next_room_question(code: str, session: AsyncSession = Depends(get_session)):
     room, finished = await room_manager.next_question(code)
     if finished:
-        history = History(
-            id=str(uuid4()),
-            quiz_id=room.quiz['id'],
-            organizer_id=room.organizer_id,
-            quiz_title=room.quiz['title'],
-            code=room.code,
-            finished_at=datetime.now(timezone.utc),
-            leaderboard=leaderboard(room),
-        )
-        session.add(history)
-        await session.commit()
+        await save_room_history(session, room)
     return {'room': room.snapshot()}
 
 
 @router.post('/{code}/answer', response_model=AnswerResponse)
-async def answer_room_question(code: str, payload: AnswerRoomPayload):
+async def answer_room_question(code: str, payload: AnswerRoomPayload, session: AsyncSession = Depends(get_session)):
     is_correct, score, room, points = await room_manager.answer(code, payload.userId, payload.answerIds)
+    if room_manager.all_players_answered(room):
+        room, finished = await room_manager.next_question(code)
+        if finished:
+            await save_room_history(session, room)
     return {'isCorrect': is_correct, 'score': score, 'points': points, 'room': room.snapshot()}

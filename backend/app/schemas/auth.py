@@ -1,4 +1,16 @@
+import re
+
 from pydantic import BaseModel, Field, field_validator
+
+
+EMAIL_PATTERN = re.compile(r'^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,63}$', re.IGNORECASE)
+
+
+def normalize_email(value: str) -> str:
+    email = value.strip().lower()
+    if not EMAIL_PATTERN.fullmatch(email):
+        raise ValueError('Введите корректную электронную почту.')
+    return email
 
 
 class AuthPayload(BaseModel):
@@ -8,10 +20,7 @@ class AuthPayload(BaseModel):
     @field_validator('email')
     @classmethod
     def validate_email(cls, value: str) -> str:
-        email = value.strip().lower()
-        if '@' not in email:
-            raise ValueError('Введите корректную электронную почту.')
-        return email
+        return normalize_email(value)
 
 
 class RegisterPayload(AuthPayload):
@@ -40,7 +49,4 @@ class UserUpdatePayload(BaseModel):
     def validate_optional_email(cls, value: str | None) -> str | None:
         if value is None:
             return None
-        email = value.strip().lower()
-        if '@' not in email:
-            raise ValueError('Введите корректную электронную почту.')
-        return email
+        return normalize_email(value)

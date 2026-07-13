@@ -4,9 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node scripts/build-client.mjs",
-    "check": "npm run build && npm run test:backend",
-    "test:backend": "node scripts/test-backend.mjs"
+    "build": "node scripts/build-client.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",

@@ -4,7 +4,7 @@ export default function ErrorDialog({ message, onClose }) {
       <div className="error-modal">
         <h1>ОШИБКА</h1>
         <p>{message || 'Не удалось выполнить действие. Проверьте данные и попробуйте снова.'}</p>
-        <button onClick={onClose}>Понятно</button>
+        <button onClick={onClose}>OK</button>
       </div>
     </div>
   );

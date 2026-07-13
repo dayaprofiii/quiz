@@ -12,13 +12,6 @@ docker compose up --build
 http://127.0.0.1:3000
 ```
 
-## Тестовые аккаунты
-
-```text
-organizer@quiz.test / 123456
-player@quiz.test / 123456
-```
-
 ## Архитектура
 
 ```text

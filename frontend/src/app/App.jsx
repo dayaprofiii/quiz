@@ -138,7 +138,17 @@ export default function App() {
       {user && view === 'quizzes' && <QuizListPage quizzes={ownedQuizzes} onCreate={() => { setEditing({ title: '', category: 'Общее', timeLimit: 45, rules: '', questions: [] }); setView('editor'); }} onEdit={(quiz) => { setEditing(quiz); setView('editor'); }} onLaunch={launchQuiz} />}
       {user && view === 'editor' && <QuizEditorPage quiz={editing} onCancel={() => setView('quizzes')} onSave={saveQuiz} />}
       {user && view === 'room' && <OrganizerRoomPage room={room} onStart={() => api(`/rooms/${room.code}/start`, { method: 'POST' }).catch((err) => setError(err.message))} />}
-      {user && view === 'play' && <PlayRoomPage room={room} user={user} onAnswer={(answerIds) => api(`/rooms/${room.code}/answer`, { method: 'POST', body: { userId: user.id, answerIds } })} />}
+      {user && view === 'play' && (
+        <PlayRoomPage
+          room={room}
+          user={user}
+          onAnswer={async (answerIds) => {
+            const data = await api(`/rooms/${room.code}/answer`, { method: 'POST', body: { userId: user.id, answerIds } });
+            setRoom(data.room);
+            return data;
+          }}
+        />
+      )}
       {user && view === 'history' && <HistoryPage history={history} user={user} />}
     </Layout>
   );

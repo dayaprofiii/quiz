@@ -21,7 +21,7 @@ export default function QuestionStage({ room, selected = [], onSelect, answered 
   const minutes = Math.floor(remaining / 60);
   const seconds = String(remaining % 60).padStart(2, '0');
   const isImageQuestion = question.type === 'image' && question.image;
-  const imageCaption = question.imageCaption || question.title;
+  const imageCaption = question.imageCaption;
 
   return (
     <div className="question-stage">
@@ -34,7 +34,6 @@ export default function QuestionStage({ room, selected = [], onSelect, answered 
         </>
       ) : (
         <>
-          <h1 className="question-title">{question.title}</h1>
           {question.body && <p className="question-body">{question.body}</p>}
         </>
       )}

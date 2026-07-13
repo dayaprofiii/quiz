@@ -28,7 +28,14 @@ export default function PlayRoomPage({ room, user, onAnswer }) {
       return;
     }
     try {
+      const submittedQuestionId = question?.id;
       const result = await onAnswer(selected);
+      const nextQuestionId = result?.room?.question?.id;
+      if (nextQuestionId && nextQuestionId !== submittedQuestionId) {
+        setSelected([]);
+        setAnswerState(null);
+        return;
+      }
       const points = result?.points ?? 0;
       setAnswerState({
         type: result?.isCorrect ? 'success' : 'error',

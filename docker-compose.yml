@@ -1,0 +1,47 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: quizleet-web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_started
+
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: quizleet-api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+psycopg://quizleet:quizleet@postgres:5432/quizleet
+      AUTO_CREATE_DB: "true"
+      SEED_DEMO_DATA: "true"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: quizleet-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: quizleet
+      POSTGRES_USER: quizleet
+      POSTGRES_PASSWORD: quizleet
+    ports:
+      - "5433:5432"
+    volumes:
+      - quizleet_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U quizleet -d quizleet"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  quizleet_pg_data:
